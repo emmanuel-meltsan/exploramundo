@@ -39,7 +39,7 @@ interface LanguageListProps {
 const ITEMS_PER_PAGE = 12;
 
 export default function FilterByLanguage({ languages }: LanguageListProps) {
-    const [CountryDetails, setCountryDetails] = useState<CountryDetails[]>([]);
+    const [countryDetails, setCountryDetails] = useState<CountryDetails[]>([]);
     const [page, setPage] = useState(1);
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export default function FilterByLanguage({ languages }: LanguageListProps) {
     // datos de paginacion
     const indexOfLastItem = page * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-    const currentItems = CountryDetails.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = countryDetails.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
@@ -77,7 +77,7 @@ export default function FilterByLanguage({ languages }: LanguageListProps) {
                 ))}
             </Grid>
             <CalculatePaginacion
-                totalItems={languages.length}
+                totalItems={countryDetails.length}
                 itemsPerPage={ITEMS_PER_PAGE}
                 currentPage={page}
                 onPageChange={handlePageChange}

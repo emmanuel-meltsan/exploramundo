@@ -59,7 +59,7 @@ export default function Inicio() {
                         case 'Idioma':
                             return <FilterByLanguage languages={currentItems} />;
                         case 'Región':
-                            return <FilterByRegion region={currentItems[0]} />;
+                            return <FilterByRegion regions={currentItems} />;
                         default:
                             return null;
                     }

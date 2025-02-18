@@ -94,7 +94,7 @@ export default function FilterBySubRegion({ subregions }: CountryListProps) {
 
 
             <CalculatePaginacion
-                totalItems={subregions.length}
+                totalItems={countryDetails.length}
                 itemsPerPage={ITEMS_PER_PAGE}
                 currentPage={page}
                 onPageChange={handlePageChange}
