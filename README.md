@@ -49,23 +49,19 @@ La aplicación estará disponible en [http://localhost:5173](http://localhost:51
 
 #### Construcción de la Imagen
 ```
-docker build -t explorador-paises .
+docker build -t exploramundo:latest .
 ```
 #### Ejecutar el Contenedor
 ```
-docker run -p 3000:3000 explorador-paises
+docker compose -p exploramundo up
 ```
-La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
+La aplicación estará disponible en [http://localhost:5173](http://localhost:5173).
 
 #### Publicación en Docker Hub
+puedes encontrar la aplicacion en [Docker Hub](https://hub.docker.com/repository/docker/emmlg/exploramundo/general)
 
-docker tag explorador-paises tu-usuario/explorador-paises:latest  
-docker push tu-usuario/explorador-paises:latest  
 
-#### Uso con Docker Compose
 
-docker-compose up -d
+## Creado por 📝
 
-## Licencia 📝
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto fue creado por [Emmanuel Lopez](https://github.com/emmanuel-meltsan/exploramundo)
