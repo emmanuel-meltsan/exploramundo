@@ -1,31 +1,22 @@
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
-import Pagination from '@mui/material/Pagination';
 import CountryCartinfo from './CountryCart';
+import { CountryDetails } from '../types/CountryDetails';
+import CalculatePaginacion from '../components/CalculatePaginacion';
+import { getFlagEmoji } from '../types/GetFlagEmoji';
 
-interface LanguageDetails {
-    flag: string;
-    countryCode: string; // Agregar código del país
-    countryName: string;
-    region: string;
-    subregion: string;
-    capital: string;
-    languages: string[];
-}
 
-function getFlagEmoji(countryCode: string): string {
-    const upperCode = countryCode.toUpperCase(); // Convertir a mayúsculas
-    return String.fromCodePoint(...upperCode.split('').map(letter => 0x1F1E6 - 65 + letter.charCodeAt(0)));
-}
-
-async function getLanguageDetails(language: string): Promise<LanguageDetails[]> {
+async function getLanguageDetails(language: string): Promise<CountryDetails[]> {
     try {
         const response = await fetch(`https://restcountries.com/v3.1/lang/${language}`);
-        if (!response.ok) throw new Error(`Error al obtener los países que hablan el idioma: ${language}`);
+        if (!response.ok) {
+            alert("Error al obtener los países");
+            throw new Error(`Error al obtener los países que hablan el idioma: ${language}`);
+        }
 
         const data = await response.json();
         const countries = data.map((country: any) => ({
-            flag: getFlagEmoji(country.cca2.toUpperCase()), // Convertir el código a mayúsculas
+            flag: getFlagEmoji(country.cca2.toUpperCase()),
             countryName: country.name.common,
             region: country.region,
             subregion: country.subregion,
@@ -35,6 +26,7 @@ async function getLanguageDetails(language: string): Promise<LanguageDetails[]> 
 
         return countries;
     } catch (error) {
+        alert(`Error en getLanguageDetails para ${language}:`);
         console.error(`Error en getLanguageDetails para ${language}:`, error);
         return [];
     }
@@ -47,24 +39,27 @@ interface LanguageListProps {
 const ITEMS_PER_PAGE = 12;
 
 export default function FilterByLanguage({ languages }: LanguageListProps) {
-    const [languageDetails, setLanguageDetails] = useState<LanguageDetails[]>([]);
+    const [CountryDetails, setCountryDetails] = useState<CountryDetails[]>([]);
     const [page, setPage] = useState(1);
 
     useEffect(() => {
         async function fetchLanguages() {
             const detailsPromises = languages.map((language) => getLanguageDetails(language));
             const details = await Promise.all(detailsPromises);
-            setLanguageDetails(details.flat().filter((detail) => detail !== null) as LanguageDetails[]);
+            setCountryDetails(details.flat().filter((detail) => detail !== null) as CountryDetails[]);
         }
 
         fetchLanguages();
     }, [languages]);
 
-    // 📌 Calcular los elementos de la página actual
+    // datos de paginacion
     const indexOfLastItem = page * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-    const currentItems = languageDetails.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = CountryDetails.slice(indexOfFirstItem, indexOfLastItem);
 
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
     return (
         <>
             <Grid container spacing={{ xs: 1, md: 3 }} columns={{ xs: 3, sm: 6, md: 12 }}>
@@ -81,17 +76,12 @@ export default function FilterByLanguage({ languages }: LanguageListProps) {
                     </Grid>
                 ))}
             </Grid>
-
-            {/* 📌 Paginación solo si hay más de 10 elementos */}
-            {languageDetails.length > ITEMS_PER_PAGE && (
-                <Pagination
-                    count={Math.ceil(languageDetails.length / ITEMS_PER_PAGE)}
-                    page={page}
-                    onChange={(event, value) => setPage(value)}
-                    color="primary"
-                    sx={{ margin: '30px', display: 'flex', justifyContent: 'center' }}
-                />
-            )}
+            <CalculatePaginacion
+                totalItems={languages.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                currentPage={page}
+                onPageChange={handlePageChange}
+            />
         </>
     );
 }

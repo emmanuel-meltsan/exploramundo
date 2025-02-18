@@ -1,35 +1,26 @@
 import { useEffect, useState } from 'react';
 import CountryCartinfo from "../components/CountryCart";
 import Grid from '@mui/material/Grid2';
-import Pagination from '@mui/material/Pagination';
+import { CountryDetails } from '../types/CountryDetails';
+import CalculatePaginacion from '../components/CalculatePaginacion';
+import { getFlagEmoji } from '../types/GetFlagEmoji';
 
-interface CountryDetails {
-    flag: string;
-    countryCode: string; // Agregaquitar
-    countryName: string;
-    region: string;
-    subregion: string;
-    capital: string;
-    languages: string[];
-}
 
-function getFlagEmoji(countryCode: string): string {
-    const upperCode = countryCode.toUpperCase(); // Convertir a mayúsculas
-    return String.fromCodePoint(...upperCode.split('').map(letter => 0x1F1E6 - 65 + letter.charCodeAt(0)));
-}
 
 async function getCountryDetails(countryName: string): Promise<CountryDetails | null> {
     try {
+
         const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
-        if (!response.ok) throw new Error(`Error al obtener el país: ${countryName}`);
+        if (!response.ok) {
+            alert("Error al obtener los países");
+            throw new Error(`Error al obtener el país: ${countryName}`);
+        }
 
         const data = await response.json();
         const country = data[0];
 
         return {
             flag: getFlagEmoji(country.cca2.toUpperCase()),
-            countryCode: country.cca2, // Agregar código del país
-
             countryName: country.name.common,
             region: country.region,
             subregion: country.subregion,
@@ -37,6 +28,7 @@ async function getCountryDetails(countryName: string): Promise<CountryDetails | 
             languages: Object.values(country.languages || [])
         };
     } catch (error) {
+        alert(`Error en getCountryDetails para ${countryName}:`);
         console.error(`Error en getCountryDetails para ${countryName}:`, error);
         return null;
     }
@@ -64,6 +56,7 @@ export default function FilterBySubRegion({ subregions }: CountryListProps) {
                     const details = await Promise.all(detailsPromises);
                     allCountries.push(...details.filter((detail) => detail !== null) as CountryDetails[]);
                 } else {
+                    alert(`Error al obtener países para la subregión ${subregion}`)
                     console.error(`Error al obtener países para la subregión ${subregion}`);
                 }
             }
@@ -74,10 +67,13 @@ export default function FilterBySubRegion({ subregions }: CountryListProps) {
         fetchCountriesBySubRegions();
     }, [subregions]);
 
-    // 📌 Calcular los elementos de la página actual
+    // Datos de paginacion
     const indexOfLastItem = page * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
     const currentItems = countryDetails.slice(indexOfFirstItem, indexOfLastItem);
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
 
     return (
         <>
@@ -96,16 +92,13 @@ export default function FilterBySubRegion({ subregions }: CountryListProps) {
                 ))}
             </Grid>
 
-            {/* 📌 Paginación solo si hay más de 10 elementos */}
-            {countryDetails.length > ITEMS_PER_PAGE && (
-                <Pagination
-                    count={Math.ceil(countryDetails.length / ITEMS_PER_PAGE)}
-                    page={page}
-                    onChange={(event, value) => setPage(value)}
-                    color="primary"
-                    sx={{ margin: '30px', display: 'flex', justifyContent: 'center' }}
-                />
-            )}
+
+            <CalculatePaginacion
+                totalItems={subregions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                currentPage={page}
+                onPageChange={handlePageChange}
+            />
         </>
     );
 }

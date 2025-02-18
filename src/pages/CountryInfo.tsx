@@ -4,44 +4,19 @@ import { Card, CardContent, Typography, Button } from "@mui/material";
 import CountryCartinfo from "../components/CountryCart";
 import GoogleMapComponent from "../components/GoogleMapComponent";
 import Grid from "@mui/material/Grid2";
+import {CountryData} from '../types/CountryData';
+import { getFlagEmoji } from "../types/GetFlagEmoji";
+import { CountryDetails } from "../types/CountryDetails";
 
-interface CountryData {
-  name: { common: string };
-  flags: { png: string; alt: string };
-  capital: string[];
-  region: string;
-  subregion: string;
-  population: number;
-  languages: { [key: string]: string };
-  currencies: { [key: string]: { name: string; symbol: string } };
-  maps: { googleMaps: string; openStreetMaps: string };
-  borders: string[];
-  latlng: [number, number];
-  cca2: string; 
-}
 
-interface NeighborData {
-  flag: string;
-  emojiFlag: string;
-  countryName: string;
-  region: string;
-  subregion: string;
-  capital: string;
-  languages: string[];
-}
 
-// 🔹 Función para convertir el código de país en emoji de bandera
-function getFlagEmoji(countryCode: string): string {
-  const upperCode = countryCode.toUpperCase();
-  return String.fromCodePoint(...upperCode.split("").map(letter => 0x1F1E6 - 65 + letter.charCodeAt(0)));
-}
 
 const CountryInfo: React.FC = () => {
   const { countryName } = useParams<{ countryName: string }>();
   const [country, setCountry] = useState<CountryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [neighbors, setNeighbors] = useState<NeighborData[]>([]);
+  const [neighbors, setNeighbors] = useState<CountryDetails[]>([]);
 
   useEffect(() => {
     const fetchCountry = async () => {
@@ -66,10 +41,8 @@ const CountryInfo: React.FC = () => {
             borderResponses.map((response) => response.json())
           );
 
-          // 🔹 Agregar bandera emoji al objeto `NeighborData`
           setNeighbors(borderData.map((country) => ({
-            flag: country[0].flags.png,
-            emojiFlag: getFlagEmoji(country[0].cca2), // Obtener la bandera en emoji
+           flag: getFlagEmoji(country[0].cca2),
             countryName: country[0].name.common,
             region: country[0].region,
             subregion: country[0].subregion,
@@ -93,11 +66,12 @@ const CountryInfo: React.FC = () => {
   return (
     <div className="flex flex-col items-center p-4">
       <Card className="w-full max-w-md shadow-lg p-4">
-        <CardContent className="text-center">
+      <CardContent className="text-center">
           <img
             src={country.flags.png}
             alt={country.flags.alt}
             className="w-32 h-20 mx-auto mb-4"
+
           />
           <h2 className="text-xl font-bold mb-2">{country.name.common}</h2>
           <p><strong>Capital:</strong> {country.capital?.join(", ")}</p>
@@ -118,7 +92,7 @@ const CountryInfo: React.FC = () => {
             {neighbors.map((neighbor) => (
               <Grid key={neighbor.countryName} size={3}>
                 <CountryCartinfo
-                  flag={neighbor.emojiFlag} // Pasar la bandera emoji
+                  flag={neighbor.flag} // Pasar la bandera emoji
                   countryName={neighbor.countryName}
                   region={neighbor.region}
                   subregion={neighbor.subregion}

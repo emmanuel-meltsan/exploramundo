@@ -2,19 +2,20 @@ import { useEffect, useState } from 'react';
 import CountryCart from "../components/CountryCart";
 import Grid from '@mui/material/Grid2';
 import Skeleton from '@mui/material/Skeleton';
-import CalculatePaginacion from "../components/CalculatePaginacion"; // Importa el componente de paginación
+import CalculatePaginacion from "../components/CalculatePaginacion";
 import { CountryDetails } from "../types/CountryDetails";
+import { getFlagEmoji } from '../types/GetFlagEmoji';
 
-
-function getFlagEmoji(countryCode: string): string {
-    return String.fromCodePoint(  ...countryCode.split('').map(letter => 0x1F1E6 - 65 + letter.charCodeAt(0)));
-}
 
 export async function ListCountriesDetails(): Promise<CountryDetails[]> {
     try {
         const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) throw new Error("Error al obtener los países");
+        if (!response.ok) {
 
+            alert("Error al obtener los países");
+            throw new Error("Error al obtener los países");
+
+        }
         const data = await response.json();
 
         return data.map((country: any) => ({
@@ -27,6 +28,7 @@ export async function ListCountriesDetails(): Promise<CountryDetails[]> {
         }));
 
     } catch (error) {
+        alert("Error en ListCountriesDetails:");
         console.error("Error en ListCountriesDetails:", error);
         return [];
     }
@@ -52,7 +54,6 @@ export default function SearchAllRequest() {
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
     const currentItems = countries.slice(indexOfFirstItem, indexOfLastItem);
 
-    // Manejo de cambio de página con la función onPageChange
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
     };
