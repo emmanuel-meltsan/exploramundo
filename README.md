@@ -1,50 +1,71 @@
-# React + TypeScript + Vite
+# Explorador de Países 🌍 - Reto Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una aplicación web interactiva que consume la API de REST Countries (https://restcountries.com) para explorar información sobre países del mundo.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Lista de países** con:
+  - Paginación en el cliente 📄.
+  - Barra de búsqueda por nombre 🔍.
+  - Filtros por región, subregión y lenguaje 🌎.
+  
+- **Vista de detalles de cada país**:
+  - Bandera 🇪🇸, capital 🏙️, población 👥, área 🌐, monedas 💰 y lenguajes 🗣️.
+  - Países vecinos con enlaces a sus respectivas páginas 🌍.
+  - Mapa de ubicación (para algunos países) 🗺️.
+  
+- Soporte para **modo oscuro/claro** 🌙☀️.
 
-## Expanding the ESLint configuration
+## Tecnologías Usadas 🛠️
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React ⚛️
+- TypeScript 🔠
+- Material-UI 🎨
+- Docker 🐳
+- GitHub 🧑‍💻
 
-- Configure the top-level `parserOptions` property like this:
+## Instalación y Uso 🚀
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Uso de GitHub
+
+#### Clonar el Repositorio
 ```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+git clone git@github.com:emmanuel-meltsan/exploramundo.git
+cd exploramundo
 ```
+#### Instalación de Dependencias
+```
+npm install
+```
+#### Ejecutar en Desarrollo
+```
+npm run dev
+```
+La aplicación estará disponible en [http://localhost:5173](http://localhost:5173).
+
+---
+
+## Despliegue con Docker 🚢
+
+#### Construcción de la Imagen
+```
+docker build -t explorador-paises .
+```
+#### Ejecutar el Contenedor
+```
+docker run -p 3000:3000 explorador-paises
+```
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
+
+#### Publicación en Docker Hub
+
+docker tag explorador-paises tu-usuario/explorador-paises:latest  
+docker push tu-usuario/explorador-paises:latest  
+
+#### Uso con Docker Compose
+
+docker-compose up -d
+
+## Licencia 📝
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
